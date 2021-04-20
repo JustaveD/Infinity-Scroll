@@ -1,5 +1,4 @@
 // Unsplash API
-
 const quantityImageEachTime = 10;
 const apiKey = 'nZkhvR_dbKcIelqnGyhaxvuusmk3mSaGNcm_E7snfmQ';
 const content_filter = 'high';
@@ -14,7 +13,6 @@ function helpDOMSetAttributes (element, attributes) {
         element.setAttribute(key, attributes[key]);
     }
 }
-
 
 function createImgElementAndAppendItToContainer (imgUrl,title,aHref){
 
@@ -57,6 +55,14 @@ async function getPhotosFromUnsplashAPI() {
         console.log('We got an error here ', error );
     }
 }
+
+
+// Listen event scroll and check if near the bottom of the page, load more photos
+window.addEventListener('scroll', function (){
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000){
+        getPhotosFromUnsplashAPI();
+    }
+})
 
 
 // On load
