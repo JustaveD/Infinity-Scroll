@@ -1,5 +1,5 @@
 // Unsplash API
-const quantityImageEachTime = 10;
+const quantityImageEachTime = 30;
 const apiKey = 'nZkhvR_dbKcIelqnGyhaxvuusmk3mSaGNcm_E7snfmQ';
 const content_filter = 'high';
 const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${quantityImageEachTime}&content_filter=${content_filter}`;
@@ -8,9 +8,29 @@ const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&coun
 // DOM element for image
 const imageContainer = document.querySelector('#image-container');
 
+// Check for loaded by count number of images is loaded
+let isReadyToGetMorePhoto = false;
+let imagesIsLoaded = 0;
+let totalImagesAreLoaded = 0;
+
+// Loader element
+const loader = document.querySelector('#loader');
+
 function helpDOMSetAttributes (element, attributes) {
     for (const key in attributes) {
         element.setAttribute(key, attributes[key]);
+    }
+}
+
+function checkIfImgIsLoaded() {
+    imagesIsLoaded++;
+    if(imagesIsLoaded == quantityImageEachTime){
+        isReadyToGetMorePhoto = true;
+        totalImagesAreLoaded += imagesIsLoaded;
+        imagesIsLoaded = 0;
+
+        // If those images are loaded, hidden loader in the first time load imgage
+        loader.hidden = true;
     }
 }
 
@@ -23,6 +43,9 @@ function createImgElementAndAppendItToContainer (imgUrl,title,aHref){
         alt: title,
         title: title
     })
+
+    // check if img loaded
+    imgElement.addEventListener('load', checkIfImgIsLoaded);
     
     // Create a element to whenever we click on this picture it open unsplash url of this picture
     const aElement = document.createElement('a');
@@ -56,14 +79,15 @@ async function getPhotosFromUnsplashAPI() {
     }
 }
 
-
-// Listen event scroll and check if near the bottom of the page, load more photos
-window.addEventListener('scroll', function (){
-    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000){
+function checkAndReloadPhoto () {
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && isReadyToGetMorePhoto){
+        isReadyToGetMorePhoto = false;
         getPhotosFromUnsplashAPI();
     }
-})
+}
 
+// Listen event scroll and check if near the bottom of the page, load more photos
+window.addEventListener('scroll',checkAndReloadPhoto)
 
 // On load
 
