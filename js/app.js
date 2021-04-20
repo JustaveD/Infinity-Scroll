@@ -1,8 +1,8 @@
 // Unsplash API
-const quantityImageEachTime = 30;
+let quantityImageEachTime = 5;
 const apiKey = 'nZkhvR_dbKcIelqnGyhaxvuusmk3mSaGNcm_E7snfmQ';
 const content_filter = 'high';
-const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${quantityImageEachTime}&content_filter=${content_filter}`;
+let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${quantityImageEachTime}&content_filter=${content_filter}`;
 
 
 // DOM element for image
@@ -12,6 +12,8 @@ const imageContainer = document.querySelector('#image-container');
 let isReadyToGetMorePhoto = false;
 let imagesIsLoaded = 0;
 let totalImagesAreLoaded = 0;
+//Loading img for the first time
+let initialLoader = true;
 
 // Loader element
 const loader = document.querySelector('#loader');
@@ -28,6 +30,12 @@ function checkIfImgIsLoaded() {
         isReadyToGetMorePhoto = true;
         totalImagesAreLoaded += imagesIsLoaded;
         imagesIsLoaded = 0;
+
+        if(initialLoader){
+            quantityImageEachTime = 30;
+            apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${quantityImageEachTime}&content_filter=${content_filter}`;
+            initialLoader = false;
+        }
 
         // If those images are loaded, hidden loader in the first time load imgage
         loader.hidden = true;
